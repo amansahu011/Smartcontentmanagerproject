@@ -37,3 +37,5 @@ keyfile.txt
 
 # Ignore environment variable file
 .env
+/target/
+/dist/

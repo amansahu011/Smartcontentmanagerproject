@@ -1,19 +1,15 @@
-# Step 1: Build stage (use Maven + JDK 17 to build the app)
+# Step 1: Build stage
 FROM maven:3.9.4-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copy pom.xml and download dependencies
-COPY pom.xml .
-RUN mvn dependency:go-offline -B
+# Copy everything first
+COPY . .
 
-# Copy source code
-COPY src ./src
+# Package the application (skip tests)
+RUN ./mvnw clean package -Dmaven.test.skip=true
 
-# Package the application (skip tests for faster build)
-RUN mvn clean package -DskipTests
-
-# Step 2: Run stage (use smaller JDK image for runtime)
-FROM eclipse-temurin:17-jdk-alpine
+# Step 2: Run stage
+FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
 
 # Copy jar from build stage

@@ -1,11 +1,11 @@
-# Step 1: Build stage
+# Step 1: Build stage (Docker me Maven aur JDK 17 hai)
 FROM maven:3.9.4-eclipse-temurin-17 AS build
 WORKDIR /app
 
 # Copy everything
 COPY . .
 
-# Package the application using system Maven (skip tests)
+# Package the application (skip tests)
 RUN mvn clean package -Dmaven.test.skip=true
 
 # Step 2: Run stage

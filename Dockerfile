@@ -1,22 +1,19 @@
-# Step 1: Build stage (Docker me Maven aur JDK 17 hai)
-FROM maven:3.9.4-eclipse-temurin-17 AS build
+# Step 1: Build stage
+FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
 
 # Copy everything
 COPY . .
 
-# Package the application (skip tests)
-RUN mvn clean package -Dmaven.test.skip=true
+# Give mvnw execute permission
+RUN chmod +x mvnw
+
+# Package app using wrapper
+RUN ./mvnw clean package -Dmaven.test.skip=true
 
 # Step 2: Run stage
 FROM eclipse-temurin:17-jdk-jammy
 WORKDIR /app
-
-# Copy jar from build stage
 COPY --from=build /app/target/*.jar app.jar
-
-# Expose port
 EXPOSE 8080
-
-# Run the application
 ENTRYPOINT ["java","-jar","app.jar"]

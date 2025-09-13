@@ -1,23 +1,26 @@
-# Stage 1: Build with Maven + JDK
-FROM maven:3.9.3-eclipse-temurin-17 AS build
+# Step 1: Base image with JDK 23
+FROM eclipse-temurin:23-jdk-jammy
+
+# Step 2: Install Maven
+RUN apt-get update && \
+    apt-get install -y maven && \
+    apt-get clean
+
+# Step 3: Set working directory
 WORKDIR /app
 
-# Copy only pom.xml first (dependency caching)
-COPY pom.xml ./
-
-# Download dependencies first (speeds up Docker build)
+# Step 4: Copy pom.xml and download dependencies first (for caching)
+COPY pom.xml .
 RUN mvn dependency:go-offline
 
-# Copy source code
-COPY src ./src
+# Step 5: Copy the rest of the project
+COPY . .
 
-# Build JAR without running tests
+# Step 6: Build the Spring Boot application (skip tests for faster build)
 RUN mvn clean package -DskipTests
 
-# Stage 2: Runtime
-FROM eclipse-temurin:17-jdk
-WORKDIR /app
-
-COPY --from=build /app/target/*.jar app.jar
+# Step 7: Expose port (default Spring Boot port)
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+
+# Step 8: Run the jar
+CMD ["java", "-jar", "target/your-project-name.jar"]

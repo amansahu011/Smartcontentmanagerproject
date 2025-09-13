@@ -1,23 +1,23 @@
-# Stage 1: Build the JAR inside Docker
+# Stage 1: Build with Maven + JDK
 FROM maven:3.9.3-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copy pom.xml and source code
-COPY pom.xml .
+# Copy only pom.xml first (dependency caching)
+COPY pom.xml ./
+
+# Download dependencies first (speeds up Docker build)
+RUN mvn dependency:go-offline
+
+# Copy source code
 COPY src ./src
 
-# Build the JAR without running tests
+# Build JAR without running tests
 RUN mvn clean package -DskipTests
 
-# Stage 2: Create lightweight runtime image
+# Stage 2: Runtime
 FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
-# Copy the JAR from the build stage
 COPY --from=build /app/target/*.jar app.jar
-
-# Expose Spring Boot default port
 EXPOSE 8080
-
-# Run the Spring Boot application
 ENTRYPOINT ["java","-jar","app.jar"]

@@ -1,26 +1,50 @@
-# Step 1: Base image with JDK 23
-FROM eclipse-temurin:23-jdk-jammy
+# ------------------------------
+# 1. Base image with JDK 23
+# ------------------------------
+FROM openjdk:23-jdk-slim
 
-# Step 2: Install Maven
-RUN apt-get update && \
-    apt-get install -y maven && \
-    apt-get clean
+# ------------------------------
+# 2. Install system dependencies
+# ------------------------------
+RUN apt-get update && apt-get install -y \
+    maven \
+    git \
+    curl \
+    unzip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Step 3: Set working directory
+# ------------------------------
+# 3. Set working directory
+# ------------------------------
 WORKDIR /app
 
-# Step 4: Copy pom.xml and download dependencies first (for caching)
+# ------------------------------
+# 4. Copy pom.xml first for caching
+# ------------------------------
 COPY pom.xml .
+
+# Download all dependencies (offline) to avoid build errors later
 RUN mvn dependency:go-offline
 
-# Step 5: Copy the rest of the project
+# ------------------------------
+# 5. Copy the rest of the project
+# ------------------------------
 COPY . .
 
-# Step 6: Build the Spring Boot application (skip tests for faster build)
+# ------------------------------
+# 6. Build the Spring Boot application
+# ------------------------------
+# Skip tests to avoid failing builds if test errors exist
 RUN mvn clean package -DskipTests
 
-# Step 7: Expose port (default Spring Boot port)
+# ------------------------------
+# 7. Expose Spring Boot default port
+# ------------------------------
 EXPOSE 8080
 
-# Step 8: Run the jar
+# ------------------------------
+# 8. Run the built jar
+# ------------------------------
+# Replace 'your-project-name.jar' with the actual jar file name
 CMD ["java", "-jar", "target/your-project-name.jar"]

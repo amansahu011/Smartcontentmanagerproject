@@ -14,13 +14,92 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@Setter
-@AllArgsConstructor
+
 @NoArgsConstructor
 @ToString
 public class ContactForm {
 
-    @NotBlank(message = "Name is required")
+    public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public boolean isFavorite() {
+		return favorite;
+	}
+
+	public void setFavorite(boolean favorite) {
+		this.favorite = favorite;
+	}
+
+	public String getWebsiteLink() {
+		return websiteLink;
+	}
+
+	public void setWebsiteLink(String websiteLink) {
+		this.websiteLink = websiteLink;
+	}
+
+	public String getLinkedInLink() {
+		return linkedInLink;
+	}
+
+	public void setLinkedInLink(String linkedInLink) {
+		this.linkedInLink = linkedInLink;
+	}
+
+	public MultipartFile getContactImage() {
+		return contactImage;
+	}
+
+	public void setContactImage(MultipartFile contactImage) {
+		this.contactImage = contactImage;
+	}
+
+	public String getPicture() {
+		return picture;
+	}
+
+	public void setPicture(String picture) {
+		this.picture = picture;
+	}
+
+	@NotBlank(message = "Name is required")
     private String name;
 
     @NotBlank(message = "Email is required")

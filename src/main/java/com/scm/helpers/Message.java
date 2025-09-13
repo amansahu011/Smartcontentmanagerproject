@@ -18,3 +18,4 @@ public class Message {
     private MessageType type = MessageType.blue;
 
 }
+

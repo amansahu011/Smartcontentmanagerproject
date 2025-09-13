@@ -1,11 +1,17 @@
-FROM eclipse-temurin:23-jdk AS build
+# Build stage with Maven
+FROM maven:3.9.4-eclipse-temurin-23 AS build
 WORKDIR /app
 COPY . .
-RUN chmod +x mvnw
-RUN ./mvnw clean package -Dmaven.test.skip=true
 
+# Build the project
+RUN mvn clean package -Dmaven.test.skip=true
+
+# Run stage with JDK only
 FROM eclipse-temurin:23-jdk
 WORKDIR /app
+
+# Copy built jar from build stage
 COPY --from=build /app/target/*.jar app.jar
+
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
